@@ -1,0 +1,58 @@
+# =============================================================
+# AURA — Docker Compose (GPU-enabled)
+# =============================================================
+# Prerequisites:
+#   1. Docker >= 24.0
+#   2. NVIDIA Container Toolkit (nvidia-docker2)
+#   3. A CUDA-capable GPU with drivers >= 535
+# =============================================================
+
+services:
+  # ----- Ollama LLM server -----------------------------------
+  ollama:
+    image: ollama/ollama:latest
+    container_name: aura-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  # ----- AURA Streamlit app ----------------------------------
+  aura:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aura-app
+    ports:
+      - "8501:8501"
+    volumes:
+      - aura_manuals:/app/manuals
+      - ./sample_manuals:/app/sample_manuals:ro
+    env_file:
+      - .env
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    depends_on:
+      - ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+volumes:
+  ollama_models:
+    driver: local
+  aura_manuals:
+    driver: local
