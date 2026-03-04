@@ -45,28 +45,28 @@ AURA ships with a sample copy of the **IPC-A-610F** standard for testing, but it
 ## Architecture
 
 ```
-┌────────────────────────────────────────────────────────────────┐
-│                     Streamlit UI (app.py)                      │
-│  ┌──────────────────────┐   ┌───────────────────────────────┐  │
-│  │   🔬 Image Analysis  │   │   💬 Manual Chatbot           │  │
-│  │                      │   │                               │  │
-│  │  1. Retrieval Agent  │   │  FAISS vector store           │  │
-│  │  2. Defect Analysis  │   │  + Ollama local LLM           │  │
-│  │  3. Segmentation     │   │  + PyMuPDF text extraction    │  │
-│  │  4. Explanation      │   │                               │  │
-│  └──────────┬───────────┘   └──────────────┬────────────────┘  │
-│             │                              │                   │
-│  ┌──────────▼──────────────────────────────▼────────────────┐  │
-│  │              manual_manager.py                           │  │
-│  │  PDF parsing · image extraction · Qdrant + FAISS build   │  │
-│  └──────────────────────────────────────────────────────────┘  │
-└────────────────────────────────────────────────────────────────┘
-        │                         │
-        ▼                         ▼
-   ┌─────────┐             ┌───────────┐
-   │  Ollama  │             │  OpenAI   │
-   │  (local) │             │  API      │
-   └─────────┘             └───────────┘
+┌───────────────────────────────────────────────────────────────┐
+│                     Streamlit UI (app.py)                     │
+│  ┌──────────────────────┐   ┌──────────────────────────────┐  │
+│     🔬 Image Analysis           💬 Manual Chatbot            │
+│  │                      │   │                              │  │
+│  │  1. Retrieval Agent  │   │  FAISS vector store          │  │
+│  │  2. Defect Analysis  │   │  + Ollama local LLM          │  │
+│  │  3. Segmentation     │   │  + PyMuPDF text extraction   │  │
+│  │  4. Explanation      │   │                              │  │
+│  └──────────┬───────────┘   └──────────────┬───────────────┘  │
+│             │                              │                  │
+│  ┌──────────▼──────────────────────────────▼───────────────┐  │
+│  │                   manual_manager.py                     │  │
+│  │  PDF parsing · image extraction · Qdrant + FAISS build  │  │
+│  └─────────────────────────────────────────────────────────┘  │
+└───────────────────────────────────────────────────────────────┘
+                     │                    │
+                     ▼                    ▼
+                ┌─────────┐          ┌─────────┐
+                │ Ollama  │          │  OpenAI │
+                │ (local) │          │  API    │
+                └─────────┘          └─────────┘
 ```
 
 ---
