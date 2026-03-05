@@ -1,4 +1,4 @@
-# AURA — Automated Unified Review Assistant
+# AURA — Augmented Understanding for Reliable Anomaly-detection
 
 <p align="center">
   <img src="Logo/AURA_logo.png" width="800">
@@ -6,7 +6,7 @@
 
 **AURA** is a GPU-accelerated, manual-agnostic tool for automated visual inspection of PCB assemblies. It combines multimodal Retrieval-Augmented Generation (RAG), vision-language models, and instance segmentation to detect, classify, and explain manufacturing defects with explicit references to industry standards.
 
-AURA ships with a **pre-processed copy of the IPC-A-610F** standard — all vector indices and extracted figures are included, so reviewers can test the tool immediately without any API key or manual processing. Additionally, AURA can ingest **any** PCB/electronics reference manual in PDF format.
+AURA ships with a **pre-processed copy of the IPC-A-610F** standard — all vector indices and extracted figures are included, so users can test the tool immediately without any API key or manual processing. Additionally, AURA can ingest **any** PCB/electronics reference manual in PDF format.
 
 ---
 
