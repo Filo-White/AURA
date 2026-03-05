@@ -1,0 +1,13 @@
+{
+  "manual_id": "IPC-A-610F",
+  "manual_name": "IPC-A-610F",
+  "original_filename": "IPC-A-610F.pdf",
+  "content_dir": "manuals/IPC-A-610F/content",
+  "qdrant_dir": "manuals/IPC-A-610F/qdrant_data",
+  "storage_dir": "manuals/IPC-A-610F/storage_dir",
+  "vector_db_dir": "manuals/IPC-A-610F/vector_db",
+  "cache_dir": "manuals/IPC-A-610F/cache",
+  "pdf_path": "manuals/IPC-A-610F/content/IPC-A-610F.pdf",
+  "pre_built": true,
+  "processed_at": "2026-03-05T12:00:00+00:00"
+}
