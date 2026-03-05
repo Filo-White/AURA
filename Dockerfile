@@ -35,6 +35,18 @@ RUN pip install --upgrade pip && \
 COPY requirements.txt .
 RUN pip install --ignore-installed blinker -r requirements.txt
 
+# Dummy flash_attn module — Sa2VA's remote code imports it at the top level,
+# but use_flash_attn=False prevents actual usage.  The runtime image has no
+# nvcc so we cannot compile the real package.
+RUN python -c "\
+import os, pathlib;\
+p = pathlib.Path('/usr/local/lib/python3.11/dist-packages/flash_attn');\
+p.mkdir(parents=True, exist_ok=True);\
+(p / '__init__.py').write_text('# dummy flash_attn stub\n');\
+(p / 'flash_attn_interface.py').write_text('def flash_attn_func(*a, **kw): raise NotImplementedError\ndef flash_attn_varlen_func(*a, **kw): raise NotImplementedError\n');\
+(p / 'bert_padding.py').write_text('def pad_input(*a, **kw): raise NotImplementedError\ndef unpad_input(*a, **kw): raise NotImplementedError\ndef index_first_axis(*a, **kw): raise NotImplementedError\n');\
+"
+
 # --- Application code ---
 COPY app.py image_analysis_module.py chatbot_module.py manual_manager.py ./
 COPY .streamlit/ .streamlit/
