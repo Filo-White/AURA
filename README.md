@@ -6,7 +6,7 @@
 
 **AURA** is a GPU-accelerated, manual-agnostic tool for automated visual inspection of PCB assemblies. It combines multimodal Retrieval-Augmented Generation (RAG), vision-language models, and instance segmentation to detect, classify, and explain manufacturing defects with explicit references to industry standards.
 
-AURA ships with a sample copy of the **IPC-A-610F** standard for testing, but it can ingest **any** PCB/electronics reference manual in PDF format.
+AURA ships with a **pre-processed copy of the IPC-A-610F** standard — all vector indices and extracted figures are included, so reviewers can test the tool immediately without any API key or manual processing. Additionally, AURA can ingest **any** PCB/electronics reference manual in PDF format.
 
 ---
 
@@ -148,14 +148,22 @@ cd AURA
 cp .env.template .env
 ```
 
-Edit `.env` and fill in your OpenAI API key, This is required for the GPT-5.2 model option in Image Analysis mode and for initial embedding of a new manual that you want to use:
+Edit `.env`:
 
 ```dotenv
 OPENAI_API_KEY=sk-your-actual-key-here
 OLLAMA_HOST=http://ollama:11434
 ```
 
-> **Note:** If you only plan to use the Ollama-based models (Qwen3-VL for image analysis, any Ollama model for chatbot), you can leave `OPENAI_API_KEY` empty. The OpenAI key is **only** required if you select "GPT-5.2 (OpenAI)" in the model dropdown.
+> **Important — when is the OpenAI API key needed?**
+>
+> | Scenario | API key required? |
+> |---|---|
+> | Testing with the **pre-built IPC-A-610F** manual + **Ollama models** | **No** |
+> | Using the **GPT-5.2 (OpenAI)** model for Image Analysis | **Yes** |
+> | **Uploading a new PDF** manual (embedding requires OpenAI) | **Yes** |
+>
+> If you only want to test AURA with the included IPC-A-610F data and Ollama models, you can leave `OPENAI_API_KEY` empty and skip this step entirely.
 
 ### 3. Build and start the containers
 
@@ -192,9 +200,11 @@ http://localhost:8501
 
 You should see the AURA interface with a sidebar for manual upload and mode selection.
 
-### 6. Load the sample manual
+### 6. Start using AURA
 
-See [Loading the IPC-A-610F Manual](#loading-the-ipc-a-610f-manual) below.
+The **IPC-A-610F manual is pre-loaded** — it will appear automatically in the manual selection dropdown in the sidebar. No upload or processing is required. Select it and start analysing images or chatting with the manual immediately.
+
+To upload a different manual, see [Uploading a Custom Manual](#uploading-a-custom-manual).
 
 ### 7. Stop the application
 
@@ -319,7 +329,14 @@ This should show all pulled models with their sizes.
 
 ## Configuring the OpenAI API Key
 
-The OpenAI API key is **optional** — it is only required if you want to use the **GPT-5.2 (OpenAI)** model for the Defect Analysis and Explanation agents.
+The OpenAI API key is **optional for testing with the pre-built IPC-A-610F manual**. It is only required in two scenarios:
+
+1. **Using GPT-5.2 (OpenAI) as the analysis model** — If you select "GPT-5.2 (OpenAI)" in the Image Analysis model dropdown.
+2. **Uploading a new PDF manual** — The manual ingestion pipeline uses OpenAI embeddings to build the Qdrant multimodal vector index.
+
+If you want to test AURA using **only open-source models** (Qwen3-VL for image analysis, any Ollama model for chatbot) with the **pre-built IPC-A-610F** data, no API key is needed at all.
+
+To set the key:
 
 1. Get an API key from [platform.openai.com](https://platform.openai.com/).
 2. Add it to your `.env` file:
@@ -327,39 +344,39 @@ The OpenAI API key is **optional** — it is only required if you want to use th
    OPENAI_API_KEY=sk-proj-your-key-here
    ```
 
-If you only plan to use Ollama models, you can leave this blank.
-
 ---
 
 ## Using the Application
 
-### Loading the IPC-A-610F Manual
+### Using the Pre-Built IPC-A-610F Manual
 
-The repository includes a sample copy of the IPC-A-610F standard in the `sample_manuals/` folder. To load it:
+The repository includes a **fully pre-processed** copy of the IPC-A-610F standard. All vector indices (Qdrant multimodal + FAISS text) and extracted reference figures are already built and included in the `manuals/IPC-A-610F/` directory.
+
+**No upload, no processing, and no OpenAI API key is needed to use it.**
 
 1. Open the application at `http://localhost:8501`.
-2. In the **left sidebar**, find the **"📖 Reference Manual"** section.
-3. Click **"Browse files"** under "Upload a new manual (PDF)".
-4. Navigate to the `sample_manuals/` folder inside the AURA directory and select `IPC-A-610F.pdf`.
-   - **Docker users:** The file is mounted at `/app/sample_manuals/IPC-A-610F.pdf` inside the container, but you upload it through the browser UI, so navigate to your local `AURA/sample_manuals/` folder.
-5. The system will:
-   - **Validate** the PDF (check for PCB/electronics domain keywords).
-   - **Extract** all figures from the PDF using PyMuPDF.
-   - **Build** a Qdrant multimodal vector index (text + image embeddings).
-   - **Build** a FAISS text index for the chatbot.
-   - This process takes **2–5 minutes** depending on your hardware.
-6. Once complete, **"IPC-A-610F"** will appear in the manual selection dropdown.
+2. In the **left sidebar**, the **"📖 Reference Manual"** section will show **"IPC-A-610F"** already selected in the dropdown.
+3. You are ready to use both modes immediately:
+   - **🔬 Image Analysis** — Upload a PCB image and select **Qwen3-VL (Ollama)** as the model.
+   - **💬 Manual Chatbot** — Ask questions about the IPC-A-610F standard.
 
-> **Important:** Processing only happens once. If you restart the application, the manual will be detected from the `manuals/` directory and loaded instantly.
+> **No API costs are incurred** when using the pre-built manual with Ollama models. Everything runs locally.
 
 ### Uploading a Custom Manual
+
+> **Requires an OpenAI API key.** The manual ingestion pipeline uses OpenAI embeddings to build the Qdrant multimodal vector index. Set `OPENAI_API_KEY` in your `.env` file before uploading a new manual.
 
 You can upload any PDF manual related to PCB/electronics manufacturing:
 
 1. Click **"Browse files"** in the sidebar.
 2. Select your PDF file (max 200 MB).
 3. The system validates the PDF for domain relevance. If the PDF does not contain enough PCB/electronics-related terms, it will be **rejected** with a message explaining why.
-4. If accepted, it goes through the same extraction and indexing pipeline described above.
+4. If accepted, the system will:
+   - **Extract** all figures from the PDF using PyMuPDF.
+   - **Build** a Qdrant multimodal vector index (text + image embeddings via OpenAI).
+   - **Build** a FAISS text index for the chatbot (local HuggingFace embeddings).
+   - This process takes **2–5 minutes** depending on your hardware.
+5. Once complete, the new manual will appear in the selection dropdown and can be used with any model (including Ollama).
 
 ---
 
@@ -409,16 +426,18 @@ AURA/
 ├── .streamlit/
 │   └── config.toml             # Streamlit server & theme configuration
 ├── sample_manuals/
-│   └── IPC-A-610F.pdf          # Sample manual for testing
-└── manuals/                    # Runtime directory (created automatically)
-    └── <manual_id>/
-        ├── content/            # PDF + extracted figures
-        ├── qdrant_data/        # Qdrant multimodal vector index
-        ├── storage_dir/        # LlamaIndex persisted storage
-        ├── vector_db/          # FAISS text index
+│   └── IPC-A-610F.pdf          # Original PDF (for reference / re-upload)
+└── manuals/
+    └── IPC-A-610F/             # ★ Pre-built — ready to use out of the box
+        ├── content/            # PDF + 400+ extracted reference figures
+        ├── qdrant_data/        # Qdrant multimodal vector index (pre-built)
+        ├── storage_dir/        # LlamaIndex persisted storage (pre-built)
+        ├── vector_db/          # FAISS text index (pre-built)
         ├── cache/              # Page image cache
         └── manifest.json       # Processing completion marker
 ```
+
+When a new manual is uploaded at runtime, a new subdirectory is created under `manuals/` with the same structure.
 
 ---
 
