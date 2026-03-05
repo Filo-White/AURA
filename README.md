@@ -148,7 +148,7 @@ cd AURA
 cp .env.template .env
 ```
 
-Edit `.env` and fill in your OpenAI API key (required only for the GPT-5.2 model option in Image Analysis mode):
+Edit `.env` and fill in your OpenAI API key, This is required for the GPT-5.2 model option in Image Analysis mode and for initial embedding of a new manual that you want to use:
 
 ```dotenv
 OPENAI_API_KEY=sk-your-actual-key-here
