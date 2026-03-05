@@ -5,7 +5,6 @@ __pycache__/
 .vscode/
 .idea/
 *.log
-manuals/
 .DS_Store
 Thumbs.db
 README.md

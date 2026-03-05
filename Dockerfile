@@ -40,8 +40,8 @@ COPY app.py image_analysis_module.py chatbot_module.py manual_manager.py ./
 COPY .streamlit/ .streamlit/
 COPY sample_manuals/ sample_manuals/
 
-# Create runtime directories
-RUN mkdir -p manuals
+# Pre-built IPC-A-610F manual (indices + extracted figures)
+COPY manuals/ manuals/
 
 EXPOSE 8501
 
