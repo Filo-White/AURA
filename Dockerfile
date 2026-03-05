@@ -30,8 +30,10 @@ RUN pip install --upgrade pip && \
     pip install torch --index-url https://download.pytorch.org/whl/cu124
 
 # Then install remaining dependencies
+# --ignore-installed blinker: the CUDA base image ships blinker 1.4 via
+# distutils which pip cannot cleanly uninstall.
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install --ignore-installed blinker -r requirements.txt
 
 # --- Application code ---
 COPY app.py image_analysis_module.py chatbot_module.py manual_manager.py ./
