@@ -495,8 +495,8 @@ _sa2va_tokenizer = None
 def _get_sa2va():
     """Load the Sa2VA-4B segmentation model (singleton).
 
-    Carica in bfloat16 su CUDA quando disponibile,
-    altrimenti float32 su CPU.
+    Load in bfloat16 on CUDA when available,
+    otherwise float32 on CPU.
     """
     global _sa2va_model, _sa2va_tokenizer
 
@@ -523,7 +523,7 @@ def _get_sa2va():
         _sa2va_model = _sa2va_model.cuda()
 
     _sa2va_model = _sa2va_model.eval()
-
+    
     _sa2va_tokenizer = AutoTokenizer.from_pretrained(
         model_path,
         trust_remote_code=True,
