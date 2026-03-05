@@ -13,6 +13,8 @@ llama-index>=0.10.0
 llama-index-llms-openai>=0.1.0
 llama-index-vector-stores-qdrant>=0.1.0
 llama-index-embeddings-openai>=0.1.0
+llama-index-embeddings-clip>=0.1.0
+clip @ git+https://github.com/openai/CLIP.git
 qdrant-client>=1.7.0
 Pillow>=9.4.0
 
