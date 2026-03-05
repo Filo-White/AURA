@@ -31,8 +31,10 @@ requests>=2.31.0
 # --- Segmentation Agent (Sa2VA-4B) ---
 torch>=2.0.0
 numpy>=1.24.0
-transformers>=4.40.0
-accelerate>=0.25.0
+transformers==4.57.1
+accelerate==1.12.0
+safetensors==0.7.0
 peft>=0.10.0
 einops>=0.7.0
 timm>=0.9.0
+
